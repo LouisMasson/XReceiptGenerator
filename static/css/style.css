@@ -1,0 +1,78 @@
+body {
+    background-color: #f5f5f5;
+    font-family: 'Arial', sans-serif;
+}
+
+.receipt {
+    background-color: white;
+    padding: 2rem;
+    max-width: 400px;
+    margin: 0 auto;
+    font-family: 'VT323', monospace;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.receipt::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('../images/paper-texture.svg');
+    opacity: 0.1;
+    pointer-events: none;
+}
+
+.receipt-header {
+    text-align: center;
+    border-bottom: 2px dashed #ccc;
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+}
+
+.receipt-content {
+    text-align: left;
+    margin: 1.5rem 0;
+}
+
+.receipt-footer {
+    text-align: center;
+    border-top: 2px dashed #ccc;
+    padding-top: 1rem;
+    margin-top: 1rem;
+}
+
+.action-buttons {
+    margin-top: 2rem;
+}
+
+.action-buttons button {
+    margin: 0 0.5rem;
+}
+
+.print-artifact {
+    position: absolute;
+    background: rgba(0,0,0,0.05);
+    height: 1px;
+    width: 100%;
+}
+
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    
+    #receipt, #receipt * {
+        visibility: visible;
+    }
+    
+    #receipt {
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+}

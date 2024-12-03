@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Générateur de Reçus X</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 text-center">
+                <h1 class="mt-5 mb-4">Générateur de Reçus X</h1>
+                
+                <div class="input-group mb-4">
+                    <input type="text" id="username" class="form-control" 
+                           placeholder="Nom d'utilisateur X (sans @)">
+                    <button class="btn btn-primary" id="generate">Générer</button>
+                </div>
+
+                <div id="error" class="alert alert-danger d-none"></div>
+
+                <div id="receipt-container" class="d-none">
+                    <div id="receipt" class="receipt">
+                        <div class="receipt-header">
+                            <h2>REÇU X</h2>
+                            <p class="date"></p>
+                        </div>
+                        <div class="receipt-content">
+                            <p class="username"></p>
+                            <p class="joined"></p>
+                            <p class="followers"></p>
+                            <p class="following"></p>
+                        </div>
+                        <div class="receipt-footer">
+                            <p>*** Merci de votre visite ***</p>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons mt-4">
+                        <button class="btn btn-success" id="download">
+                            Télécharger
+                        </button>
+                        <button class="btn btn-info" id="share">
+                            Partager
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/dom-to-image@2.6.0/dist/dom-to-image.min.js"></script>
+    <script src="{{ url_for('static', filename='js/receipt.js') }}"></script>
+</body>
+</html>
