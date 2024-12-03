@@ -15,19 +15,28 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
+        const loadingIcon = document.getElementById('loading-icon');
+        const generateBtn = document.getElementById('generate');
+        
         try {
+            loadingIcon.classList.remove('hidden');
+            generateBtn.disabled = true;
+            
             const response = await fetch(`/api/user/${username}`);
             const data = await response.json();
 
             if (response.ok) {
                 updateReceipt(data.data);
-                receiptContainer.classList.remove('d-none');
-                errorDiv.classList.add('d-none');
+                receiptContainer.classList.remove('hidden');
+                errorDiv.classList.add('hidden');
             } else {
                 showError(data.error || "Erreur lors de la récupération des données");
             }
         } catch (error) {
             showError("Erreur de connexion au serveur");
+        } finally {
+            loadingIcon.classList.add('hidden');
+            generateBtn.disabled = false;
         }
     }
 
@@ -98,7 +107,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function showError(message) {
         errorDiv.textContent = message;
-        errorDiv.classList.remove('d-none');
-        receiptContainer.classList.add('d-none');
+        errorDiv.classList.remove('hidden');
+        errorDiv.classList.add('shake');
+        receiptContainer.classList.add('hidden');
+        
+        // Remove shake class after animation completes
+        setTimeout(() => {
+            errorDiv.classList.remove('shake');
+        }, 500);
     }
 });
