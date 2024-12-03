@@ -43,6 +43,21 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateReceipt(userData) {
         const receipt = document.getElementById('receipt');
         
+        // Afficher le compteur de requêtes s'il est disponible
+        const requestInfo = userData.requests_info;
+        if (requestInfo) {
+            const requestMessage = document.createElement('div');
+            requestMessage.className = 'text-sm text-blue-600 mb-4 font-medium';
+            requestMessage.innerHTML = `
+                <div class="bg-blue-50 text-blue-700 px-4 py-2 rounded-lg">
+                    Il vous reste ${requestInfo.remaining} requête${requestInfo.remaining > 1 ? 's' : ''} aujourd'hui.<br>
+                    Réinitialisation le ${requestInfo.reset_date} à ${requestInfo.reset_time}.
+                </div>
+            `;
+            const header = receipt.querySelector('.receipt-header');
+            header.appendChild(requestMessage);
+        }
+        
         // Format numbers with French locale
         const formatNumber = (num) => new Intl.NumberFormat('fr-FR').format(num);
         

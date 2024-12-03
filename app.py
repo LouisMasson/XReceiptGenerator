@@ -44,6 +44,12 @@ def get_user(username):
     # Incrémenter le compteur
     counter['count'] += 1
 
+    # Calculer les requêtes restantes
+    remaining_requests = 3 - counter['count']
+    next_reset = counter['last_reset'] + timedelta(days=1)
+    reset_time = next_reset.strftime('%H:%M')
+    reset_date = next_reset.strftime('%d/%m/%Y')
+
     # Vérifier le cache d'abord
     cache_key = f'user_{username}'
     cached_response = cache.get(cache_key)
@@ -71,6 +77,12 @@ def get_user(username):
         if response.status_code == 200:
             # Stocker dans le cache avant de retourner
             response_data = response.json()
+            # Ajouter les informations du compteur
+            response_data['requests_info'] = {
+                'remaining': remaining_requests,
+                'reset_time': reset_time,
+                'reset_date': reset_date
+            }
             cache.set(cache_key, response_data)
             return jsonify(response_data)
         elif response.status_code == 404:
