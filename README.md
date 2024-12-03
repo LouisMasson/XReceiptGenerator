@@ -32,17 +32,17 @@ Un service web permettant de générer des reçus stylisés pour les profils X (
 
 ## ⚙️ Configuration
 
-1. Créer un fichier .env à la racine du projet :
-   ```env
-   X_API_KEY=votre_bearer_token
-   FLASK_APP=main.py
-   FLASK_ENV=production
+1. Copier le fichier .env.example en .env :
+   ```bash
+   cp .env.example .env
    ```
 
 2. Obtenir une clé API X :
    - Créer un compte développeur sur https://developer.x.com
    - Créer un projet et générer un Bearer Token
-   - Ajouter le token dans le fichier .env
+   - Ajouter le token dans le fichier .env en remplaçant `your_bearer_token_here`
+
+⚠️ Important : Ne jamais commiter le fichier .env dans le dépôt Git. Il est déjà inclus dans .gitignore pour votre sécurité.
 
 ## 🚀 Utilisation
 
