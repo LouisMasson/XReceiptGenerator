@@ -42,6 +42,13 @@
         <div class="max-w-2xl mx-auto">
             <h1 class="text-4xl font-bold text-center mt-12 mb-8">Générateur de Reçus X</h1>
             
+            <div id="request-counter" class="mb-8 text-center hidden">
+                <div class="inline-block bg-blue-500/10 border border-blue-500/20 text-blue-500 px-4 py-2 rounded-lg text-sm">
+                    <span id="remaining-requests"></span><br>
+                    <span id="reset-time" class="text-xs opacity-75"></span>
+                </div>
+            </div>
+            
             <div class="flex gap-2 mb-8">
                 <input type="text" 
                        id="username" 

@@ -46,16 +46,14 @@ document.addEventListener('DOMContentLoaded', function() {
         // Afficher le compteur de requêtes s'il est disponible
         const requestInfo = userData.requests_info;
         if (requestInfo) {
-            const requestMessage = document.createElement('div');
-            requestMessage.className = 'text-sm text-blue-600 mb-4 font-medium';
-            requestMessage.innerHTML = `
-                <div class="bg-blue-50 text-blue-700 px-4 py-2 rounded-lg">
-                    Il vous reste ${requestInfo.remaining} requête${requestInfo.remaining > 1 ? 's' : ''} aujourd'hui.<br>
-                    Réinitialisation le ${requestInfo.reset_date} à ${requestInfo.reset_time}.
-                </div>
-            `;
-            const header = receipt.querySelector('.receipt-header');
-            header.appendChild(requestMessage);
+            const counterDiv = document.getElementById('request-counter');
+            const remainingSpan = document.getElementById('remaining-requests');
+            const resetSpan = document.getElementById('reset-time');
+            
+            remainingSpan.textContent = `Il vous reste ${requestInfo.remaining} requête${requestInfo.remaining > 1 ? 's' : ''} aujourd'hui`;
+            resetSpan.textContent = `Réinitialisation le ${requestInfo.reset_date} à ${requestInfo.reset_time}`;
+            
+            counterDiv.classList.remove('hidden');
         }
         
         // Format numbers with French locale
