@@ -1,6 +1,6 @@
 import os
 from flask import Flask, render_template, request, jsonify
-import requests
+from requests_oauthlib import OAuth1Session
 from flask_caching import Cache
 from config import X_API_KEY
 
@@ -27,24 +27,19 @@ def get_user(username):
     if cached_response is not None:
         return jsonify(cached_response)
 
-    # Configuration des en-têtes pour l'API v1.1
-    headers = {
-        'Authorization': f'Bearer {X_API_KEY}',
-        'User-Agent': 'XReceiptGenerator/1.0',
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-    }
+    twitter = OAuth1Session(
+        client_key=X_API_KEY,
+        client_secret=None,
+        resource_owner_key=None,
+        resource_owner_secret=None
+    )
     
-    # Configuration de l'URL et des paramètres pour l'API v1.1
-    base_url = 'https://api.twitter.com/1.1/users/show.json'
-    params = {
-        'screen_name': username,
-        'include_entities': 'true'
-    }
+    url = 'https://api.twitter.com/1.1/users/show.json'
+    params = {'screen_name': username}
 
     try:
         app.logger.info(f"Tentative de récupération des données pour l'utilisateur: {username}")
-        response = requests.get(base_url, headers=headers, params=params)
+        response = twitter.get(url, params=params)
         
         if response.status_code == 200:
             # Transform v1.1 API response to match our frontend expectations
@@ -98,11 +93,8 @@ def get_user(username):
                 'error': f"Erreur inattendue de l'API X. Veuillez réessayer ultérieurement."
             }), response.status_code
             
-    except requests.exceptions.ConnectionError:
-        return jsonify({
-            'error': "Impossible de se connecter à l'API X. Veuillez vérifier votre connexion"
-        }), 503
     except Exception as e:
+        app.logger.error(f"Erreur lors de la récupération des données: {str(e)}")
         return jsonify({
             'error': "Une erreur interne s'est produite lors de la récupération des données"
         }), 500
