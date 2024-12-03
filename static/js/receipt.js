@@ -4,11 +4,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const receiptContainer = document.getElementById('receipt-container');
     const errorDiv = document.getElementById('error');
     const downloadBtn = document.getElementById('download');
-    const shareBtn = document.getElementById('share');
 
     generateBtn.addEventListener('click', generateReceipt);
     downloadBtn.addEventListener('click', downloadReceipt);
-    shareBtn.addEventListener('click', shareReceipt);
 
     async function generateReceipt() {
         const username = usernameInput.value.trim();
@@ -86,23 +84,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function shareReceipt() {
-        if (navigator.share) {
-            domtoimage.toBlob(document.getElementById('receipt'))
-                .then(blob => {
-                    const file = new File([blob], 'x-receipt.png', { type: 'image/png' });
-                    navigator.share({
-                        files: [file],
-                        title: 'Mon reçu X',
-                        text: 'Voici mon reçu X généré!'
-                    }).catch(error => {
-                        showError("Erreur lors du partage");
-                    });
-                });
-        } else {
-            showError("Le partage n'est pas supporté sur votre appareil");
-        }
-    }
+    
 
     function showError(message) {
         errorDiv.textContent = message;
