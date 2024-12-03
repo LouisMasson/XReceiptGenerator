@@ -10,7 +10,8 @@ app.secret_key = os.urandom(24)
 # Configure Flask-Caching
 cache = Cache(config={
     'CACHE_TYPE': 'simple',
-    'CACHE_DEFAULT_TIMEOUT': 900  # 15 minutes en secondes
+    'CACHE_DEFAULT_TIMEOUT': 900,  # 15 minutes en secondes
+    'CACHE_THRESHOLD': 100  # Nombre maximum d'éléments dans le cache
 })
 cache.init_app(app)
 
@@ -19,8 +20,13 @@ def index():
     return render_template('index.html')
 
 @app.route('/api/user/<username>')
-@cache.memoize(timeout=900)
 def get_user(username):
+    # Vérifier le cache d'abord
+    cache_key = f'user_{username}'
+    cached_response = cache.get(cache_key)
+    if cached_response is not None:
+        return jsonify(cached_response)
+
     headers = {
         'Authorization': f'Bearer {X_API_KEY}',
         'User-Agent': 'XReceiptGenerator/1.0',
@@ -40,7 +46,10 @@ def get_user(username):
         )
         
         if response.status_code == 200:
-            return jsonify(response.json())
+            # Stocker dans le cache avant de retourner
+            response_data = response.json()
+            cache.set(cache_key, response_data)
+            return jsonify(response_data)
         elif response.status_code == 404:
             return jsonify({
                 'error': "L'utilisateur demandé n'existe pas sur X"
