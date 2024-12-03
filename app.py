@@ -3,9 +3,14 @@ from flask import Flask, render_template, request, jsonify
 import requests
 from flask_caching import Cache
 from config import X_API_KEY
+from datetime import datetime, timedelta
+from collections import defaultdict
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
+
+# Structure: {username: {'count': 0, 'last_reset': datetime}}
+request_counters = defaultdict(lambda: {'count': 0, 'last_reset': datetime.now()})
 
 # Configure Flask-Caching
 cache = Cache(config={
@@ -21,6 +26,24 @@ def index():
 
 @app.route('/api/user/<username>')
 def get_user(username):
+    # Vérifier et mettre à jour le compteur
+    counter = request_counters[username]
+    now = datetime.now()
+    
+    # Réinitialiser le compteur si c'est un nouveau jour
+    if (now - counter['last_reset']).days >= 1:
+        counter['count'] = 0
+        counter['last_reset'] = now
+    
+    # Vérifier la limite
+    if counter['count'] >= 3:
+        return jsonify({
+            'error': "Limite de 3 requêtes par jour atteinte pour cet utilisateur. Réessayez demain."
+        }), 429
+    
+    # Incrémenter le compteur
+    counter['count'] += 1
+
     # Vérifier le cache d'abord
     cache_key = f'user_{username}'
     cached_response = cache.get(cache_key)

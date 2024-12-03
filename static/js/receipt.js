@@ -109,6 +109,13 @@ document.addEventListener('DOMContentLoaded', function() {
         errorDiv.textContent = message;
         errorDiv.classList.remove('hidden');
         errorDiv.classList.add('shake');
+        if (message.includes('Limite de 3 requêtes')) {
+            // Style spécial pour l'erreur de limite
+            errorDiv.classList.add('bg-yellow-500/10', 'border-yellow-500/20', 'text-yellow-500');
+        } else {
+            // Reset classes for other types of errors
+            errorDiv.classList.remove('bg-yellow-500/10', 'border-yellow-500/20', 'text-yellow-500');
+        }
         receiptContainer.classList.add('hidden');
         
         // Remove shake class after animation completes
