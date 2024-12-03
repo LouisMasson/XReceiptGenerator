@@ -1,16 +1,25 @@
 import os
 from flask import Flask, render_template, request, jsonify
 import requests
+from flask_caching import Cache
 from config import X_API_KEY
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
+
+# Configure Flask-Caching
+cache = Cache(config={
+    'CACHE_TYPE': 'simple',
+    'CACHE_DEFAULT_TIMEOUT': 900  # 15 minutes en secondes
+})
+cache.init_app(app)
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
 @app.route('/api/user/<username>')
+@cache.memoize(timeout=900)
 def get_user(username):
     headers = {
         'Authorization': f'Bearer {X_API_KEY}',
