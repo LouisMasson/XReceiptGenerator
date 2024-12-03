@@ -36,12 +36,23 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateReceipt(userData) {
         const receipt = document.getElementById('receipt');
         
+        // Format numbers with French locale
+        const formatNumber = (num) => new Intl.NumberFormat('fr-FR').format(num);
+        
         // Update receipt content
-        receipt.querySelector('.date').textContent = new Date().toLocaleDateString('fr-FR');
-        receipt.querySelector('.username').textContent = `Utilisateur: @${userData.username}`;
-        receipt.querySelector('.joined').textContent = `Compte créé: ${new Date(userData.created_at).toLocaleDateString('fr-FR')}`;
-        receipt.querySelector('.followers').textContent = `Abonnés: ${userData.public_metrics.followers_count}`;
-        receipt.querySelector('.following').textContent = `Abonnements: ${userData.public_metrics.following_count}`;
+        receipt.querySelector('.date').textContent = new Date().toLocaleDateString('fr-FR', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+        receipt.querySelector('.username').textContent = `Nom: ${userData.name}\nPseudo: @${userData.username}`;
+        receipt.querySelector('.joined').textContent = `Compte créé le: ${new Date(userData.created_at).toLocaleDateString('fr-FR', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        })}`;
+        receipt.querySelector('.followers').textContent = `Abonnés: ${formatNumber(userData.public_metrics.followers_count)}`;
+        receipt.querySelector('.following').textContent = `Abonnements: ${formatNumber(userData.public_metrics.following_count)}`;
 
         // Add print artifacts
         addPrintArtifacts();
