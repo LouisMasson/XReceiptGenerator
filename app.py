@@ -20,7 +20,7 @@ def get_user(username):
     
     # Define the fields we want to retrieve
     params = {
-        'user.fields': 'created_at,public_metrics,username,name'
+        'user.fields': 'description,created_at,public_metrics,profile_image_url,url,username,name,verified'
     }
     
     try:

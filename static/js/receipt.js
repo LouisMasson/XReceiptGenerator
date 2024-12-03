@@ -43,7 +43,15 @@ document.addEventListener('DOMContentLoaded', function() {
             month: 'long',
             day: 'numeric'
         });
+        // Set profile image
+        const profileImg = receipt.querySelector('.profile-image');
+        profileImg.src = userData.profile_image_url;
+        
+        // Set user information
         receipt.querySelector('.username').textContent = `Nom: ${userData.name}\nPseudo: @${userData.username}`;
+        receipt.querySelector('.verified').textContent = userData.verified ? '✓ Compte vérifié' : '';
+        receipt.querySelector('.bio').textContent = userData.description || '';
+        receipt.querySelector('.url').textContent = userData.url ? `URL: ${userData.url}` : '';
         receipt.querySelector('.joined').textContent = `Compte créé le: ${new Date(userData.created_at).toLocaleDateString('fr-FR', {
             year: 'numeric',
             month: 'long',
@@ -51,6 +59,8 @@ document.addEventListener('DOMContentLoaded', function() {
         })}`;
         receipt.querySelector('.followers').textContent = `Abonnés: ${formatNumber(userData.public_metrics.followers_count)}`;
         receipt.querySelector('.following').textContent = `Abonnements: ${formatNumber(userData.public_metrics.following_count)}`;
+        receipt.querySelector('.tweets').textContent = `Tweets: ${formatNumber(userData.public_metrics.tweet_count)}`;
+        receipt.querySelector('.likes').textContent = `Likes: ${formatNumber(userData.public_metrics.like_count)}`;
 
         // Add print artifacts
         addPrintArtifacts();
