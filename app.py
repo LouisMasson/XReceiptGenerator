@@ -27,18 +27,24 @@ def get_user(username):
     if cached_response is not None:
         return jsonify(cached_response)
 
+    # Configuration des en-têtes pour l'API v1.1
     headers = {
         'Authorization': f'Bearer {X_API_KEY}',
         'User-Agent': 'XReceiptGenerator/1.0',
-        'Accept': 'application/json'
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
     }
     
-    # Define the fields we want to retrieve from v1.1 API
+    # Configuration de l'URL et des paramètres pour l'API v1.1
+    base_url = 'https://api.twitter.com/1.1/users/show.json'
+    params = {
+        'screen_name': username,
+        'include_entities': 'true'
+    }
+
     try:
-        response = requests.get(
-            f'https://api.twitter.com/1.1/users/show.json?screen_name={username}',
-            headers=headers
-        )
+        app.logger.info(f"Tentative de récupération des données pour l'utilisateur: {username}")
+        response = requests.get(base_url, headers=headers, params=params)
         
         if response.status_code == 200:
             # Transform v1.1 API response to match our frontend expectations
@@ -66,20 +72,30 @@ def get_user(username):
             cache.set(cache_key, response_data)
             return jsonify(response_data)
         elif response.status_code == 404:
+            app.logger.warning(f"Utilisateur non trouvé: {username}")
             return jsonify({
                 'error': "L'utilisateur demandé n'existe pas sur X"
             }), 404
         elif response.status_code == 401:
+            app.logger.error("Erreur d'authentification avec l'API X")
             return jsonify({
-                'error': "Erreur d'authentification avec l'API X"
+                'error': "Erreur d'authentification avec l'API X. Veuillez vérifier les paramètres d'accès."
             }), 401
-        elif response.status_code == 429:
+        elif response.status_code == 403:
+            app.logger.error(f"Accès refusé par l'API X: {response.json().get('error', 'Raison inconnue')}")
             return jsonify({
-                'error': "Limite de requêtes API dépassée. Veuillez réessayer plus tard"
+                'error': "Accès refusé par l'API X. Votre demande ne peut pas être traitée actuellement."
+            }), 403
+        elif response.status_code == 429:
+            app.logger.warning("Limite de taux d'API dépassée")
+            return jsonify({
+                'error': "Limite de requêtes API dépassée. Veuillez réessayer dans quelques minutes."
             }), 429
         else:
+            error_message = response.json().get('error', 'Erreur inconnue')
+            app.logger.error(f"Erreur API inattendue ({response.status_code}): {error_message}")
             return jsonify({
-                'error': f"Erreur inattendue de l'API X (code {response.status_code})"
+                'error': f"Erreur inattendue de l'API X. Veuillez réessayer ultérieurement."
             }), response.status_code
             
     except requests.exceptions.ConnectionError:
