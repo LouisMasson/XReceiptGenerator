@@ -43,8 +43,8 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateReceipt(userData) {
         const receipt = document.getElementById('receipt');
         
-        // Afficher le compteur de requêtes s'il est disponible
-        const requestInfo = userData.requests_info;
+        // Afficher le compteur de requêtes
+        const requestInfo = data.requests_info;  // Modifié : data au lieu de userData
         if (requestInfo) {
             const counterDiv = document.getElementById('request-counter');
             const remainingSpan = document.getElementById('remaining-requests');
