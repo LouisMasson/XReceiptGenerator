@@ -14,7 +14,8 @@ def index():
 def get_user(username):
     headers = {
         'Authorization': f'Bearer {X_API_KEY}',
-        'Content-Type': 'application/json'
+        'User-Agent': 'XReceiptGenerator/1.0',
+        'Accept': 'application/json'
     }
     
     # Define the fields we want to retrieve
