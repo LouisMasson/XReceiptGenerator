@@ -33,21 +33,36 @@ def get_user(username):
         'Accept': 'application/json'
     }
     
-    # Define the fields we want to retrieve
-    params = {
-        'user.fields': 'description,created_at,public_metrics,profile_image_url,url,username,name,verified'
-    }
-    
+    # Define the fields we want to retrieve from v1.1 API
     try:
         response = requests.get(
-            f'https://api.twitter.com/2/users/by/username/{username}',
-            headers=headers,
-            params=params
+            f'https://api.twitter.com/1.1/users/show.json?screen_name={username}',
+            headers=headers
         )
         
         if response.status_code == 200:
-            # Stocker dans le cache avant de retourner
-            response_data = response.json()
+            # Transform v1.1 API response to match our frontend expectations
+            raw_data = response.json()
+            response_data = {
+                'data': {
+                    'id': raw_data['id_str'],
+                    'name': raw_data['name'],
+                    'username': raw_data['screen_name'],
+                    'description': raw_data['description'],
+                    'created_at': raw_data['created_at'],
+                    'profile_image_url': raw_data['profile_image_url_https'].replace('_normal', ''),
+                    'url': raw_data['url'],
+                    'verified': raw_data['verified'],
+                    'location': raw_data['location'],
+                    'public_metrics': {
+                        'followers_count': raw_data['followers_count'],
+                        'following_count': raw_data['friends_count'],
+                        'tweet_count': raw_data['statuses_count'],
+                        'like_count': raw_data['favourites_count'],
+                        'listed_count': raw_data['listed_count']
+                    }
+                }
+            }
             cache.set(cache_key, response_data)
             return jsonify(response_data)
         elif response.status_code == 404:
