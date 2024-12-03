@@ -1,6 +1,6 @@
 import os
 from flask import Flask, render_template, request, jsonify
-from requests_oauthlib import OAuth1Session
+import requests
 from flask_caching import Cache
 from config import X_API_KEY
 
@@ -27,74 +27,51 @@ def get_user(username):
     if cached_response is not None:
         return jsonify(cached_response)
 
-    twitter = OAuth1Session(
-        client_key=X_API_KEY,
-        client_secret=None,
-        resource_owner_key=None,
-        resource_owner_secret=None
-    )
+    headers = {
+        'Authorization': f'Bearer {X_API_KEY}',
+        'User-Agent': 'XReceiptGenerator/1.0',
+        'Accept': 'application/json'
+    }
     
-    url = 'https://api.twitter.com/1.1/users/show.json'
-    params = {'screen_name': username}
-
+    # Define the fields we want to retrieve
+    params = {
+        'user.fields': 'description,created_at,public_metrics,profile_image_url,url,username,name,verified'
+    }
+    
     try:
-        app.logger.info(f"Tentative de récupération des données pour l'utilisateur: {username}")
-        response = twitter.get(url, params=params)
+        response = requests.get(
+            f'https://api.twitter.com/2/users/by/username/{username}',
+            headers=headers,
+            params=params
+        )
         
         if response.status_code == 200:
-            # Transform v1.1 API response to match our frontend expectations
-            raw_data = response.json()
-            response_data = {
-                'data': {
-                    'id': raw_data['id_str'],
-                    'name': raw_data['name'],
-                    'username': raw_data['screen_name'],
-                    'description': raw_data['description'],
-                    'created_at': raw_data['created_at'],
-                    'profile_image_url': raw_data['profile_image_url_https'].replace('_normal', ''),
-                    'url': raw_data['url'],
-                    'verified': raw_data['verified'],
-                    'location': raw_data['location'],
-                    'public_metrics': {
-                        'followers_count': raw_data['followers_count'],
-                        'following_count': raw_data['friends_count'],
-                        'tweet_count': raw_data['statuses_count'],
-                        'like_count': raw_data['favourites_count'],
-                        'listed_count': raw_data['listed_count']
-                    }
-                }
-            }
+            # Stocker dans le cache avant de retourner
+            response_data = response.json()
             cache.set(cache_key, response_data)
             return jsonify(response_data)
         elif response.status_code == 404:
-            app.logger.warning(f"Utilisateur non trouvé: {username}")
             return jsonify({
                 'error': "L'utilisateur demandé n'existe pas sur X"
             }), 404
         elif response.status_code == 401:
-            app.logger.error("Erreur d'authentification avec l'API X")
             return jsonify({
-                'error': "Erreur d'authentification avec l'API X. Veuillez vérifier les paramètres d'accès."
+                'error': "Erreur d'authentification avec l'API X"
             }), 401
-        elif response.status_code == 403:
-            app.logger.error(f"Accès refusé par l'API X: {response.json().get('error', 'Raison inconnue')}")
-            return jsonify({
-                'error': "Accès refusé par l'API X. Votre demande ne peut pas être traitée actuellement."
-            }), 403
         elif response.status_code == 429:
-            app.logger.warning("Limite de taux d'API dépassée")
             return jsonify({
-                'error': "Limite de requêtes API dépassée. Veuillez réessayer dans quelques minutes."
+                'error': "Limite de requêtes API dépassée. Veuillez réessayer plus tard"
             }), 429
         else:
-            error_message = response.json().get('error', 'Erreur inconnue')
-            app.logger.error(f"Erreur API inattendue ({response.status_code}): {error_message}")
             return jsonify({
-                'error': f"Erreur inattendue de l'API X. Veuillez réessayer ultérieurement."
+                'error': f"Erreur inattendue de l'API X (code {response.status_code})"
             }), response.status_code
             
+    except requests.exceptions.ConnectionError:
+        return jsonify({
+            'error': "Impossible de se connecter à l'API X. Veuillez vérifier votre connexion"
+        }), 503
     except Exception as e:
-        app.logger.error(f"Erreur lors de la récupération des données: {str(e)}")
         return jsonify({
             'error': "Une erreur interne s'est produite lors de la récupération des données"
         }), 500

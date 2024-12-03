@@ -70,20 +70,6 @@ document.addEventListener('DOMContentLoaded', function() {
         receipt.querySelector('.following').textContent = `Abonnements: ${formatNumber(userData.public_metrics.following_count)}`;
         receipt.querySelector('.tweets').textContent = `Tweets: ${formatNumber(userData.public_metrics.tweet_count)}`;
         receipt.querySelector('.likes').textContent = `Likes: ${formatNumber(userData.public_metrics.like_count)}`;
-        
-        // Add location if available
-        if (userData.location) {
-            const locationElem = document.createElement('p');
-            locationElem.classList.add('location');
-            locationElem.textContent = `Localisation: ${userData.location}`;
-            receipt.querySelector('.receipt-content').appendChild(locationElem);
-        }
-        
-        // Add listed count
-        const listedElem = document.createElement('p');
-        listedElem.classList.add('listed');
-        listedElem.textContent = `Listes: ${formatNumber(userData.public_metrics.listed_count)}`;
-        receipt.querySelector('.receipt-content').appendChild(listedElem);
 
         // Add print artifacts
         addPrintArtifacts();
