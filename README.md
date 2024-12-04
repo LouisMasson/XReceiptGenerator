@@ -1,3 +1,5 @@
+![X Receipt Generator](@X_Receipt_Generator.png)
+
 # Générateur de Reçus X
 
 Un service web permettant de générer des reçus stylisés pour les profils X (Twitter), avec une interface moderne et responsive.
