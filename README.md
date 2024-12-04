@@ -1,4 +1,4 @@
-![X Receipt Generator](@X_Receipt_Generator.png)
+![X Receipt Generator](X_Receipt_Generator.png)
 
 # Générateur de Reçus X
 
