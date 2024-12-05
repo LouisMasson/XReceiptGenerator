@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const receipt = document.getElementById('receipt');
         
         // Afficher le compteur de requêtes
-        const requestInfo = userData.requests_info;  // Correct : utilisation de userData
+        const requestInfo = userData.requests_info;
         if (requestInfo) {
             const counterDiv = document.getElementById('request-counter');
             const remainingSpan = document.getElementById('remaining-requests');

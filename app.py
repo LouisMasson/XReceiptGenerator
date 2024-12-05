@@ -77,8 +77,8 @@ def get_user(username):
         if response.status_code == 200:
             # Stocker dans le cache avant de retourner
             response_data = response.json()
-            # Ajouter les informations du compteur
-            response_data['requests_info'] = {
+            # Ajouter les informations du compteur dans data
+            response_data['data']['requests_info'] = {
                 'remaining': remaining_requests,
                 'reset_time': reset_time,
                 'reset_date': reset_date
