@@ -44,18 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateReceipt(userData) {
         const receipt = document.getElementById('receipt');
         
-        // Afficher le compteur de requêtes
-        const requestInfo = userData.requests_info;
-        if (requestInfo) {
-            const counterDiv = document.getElementById('request-counter');
-            const remainingSpan = document.getElementById('remaining-requests');
-            const resetSpan = document.getElementById('reset-time');
-            
-            remainingSpan.textContent = `Il vous reste ${requestInfo.remaining} requête${requestInfo.remaining > 1 ? 's' : ''} aujourd'hui`;
-            resetSpan.textContent = `Réinitialisation le ${requestInfo.reset_date} à ${requestInfo.reset_time}`;
-            
-            counterDiv.classList.remove('hidden');
-        }
+        
         
         // Format numbers with French locale
         const formatNumber = (num) => new Intl.NumberFormat('fr-FR').format(num);
@@ -123,13 +112,6 @@ document.addEventListener('DOMContentLoaded', function() {
         errorDiv.textContent = message;
         errorDiv.classList.remove('hidden');
         errorDiv.classList.add('shake', 'bg-red-500/20', 'border-2', 'border-red-500/50');
-        
-        if (message.includes('Limite de 3 requêtes')) {
-            // Style spécial pour l'erreur de limite
-            errorDiv.classList.remove('bg-red-500/20', 'border-red-500/50');
-            errorDiv.classList.add('bg-yellow-500/10', 'border-yellow-500/20', 'text-yellow-500');
-        }
-        
         receiptContainer.classList.add('hidden');
         
         setTimeout(() => {
