@@ -20,5 +20,8 @@ ENV FLASK_ENV=production
 # Expose port
 EXPOSE 5000
 
+# Generate Tailwind CSS
+RUN tailwindcss -i static/css/style.css -o static/css/tailwind.css --minify
+
 # Run gunicorn server
 CMD ["gunicorn", "--bind", "0.0.0.0:5000", "main:app"]
