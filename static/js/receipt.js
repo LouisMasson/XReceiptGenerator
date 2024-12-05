@@ -33,7 +33,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 showError(data.error || "Erreur lors de la récupération des données");
             }
         } catch (error) {
-            showError("Erreur de connexion au serveur");
+            console.error('Erreur de connexion:', error);
+            showError("Erreur de connexion au serveur. Veuillez vérifier votre connexion internet et l'accès à l'API X.");
         } finally {
             loadingIcon.classList.add('hidden');
             generateBtn.disabled = false;
@@ -121,17 +122,16 @@ document.addEventListener('DOMContentLoaded', function() {
     function showError(message) {
         errorDiv.textContent = message;
         errorDiv.classList.remove('hidden');
-        errorDiv.classList.add('shake');
+        errorDiv.classList.add('shake', 'bg-red-500/20', 'border-2', 'border-red-500/50');
+        
         if (message.includes('Limite de 3 requêtes')) {
             // Style spécial pour l'erreur de limite
+            errorDiv.classList.remove('bg-red-500/20', 'border-red-500/50');
             errorDiv.classList.add('bg-yellow-500/10', 'border-yellow-500/20', 'text-yellow-500');
-        } else {
-            // Reset classes for other types of errors
-            errorDiv.classList.remove('bg-yellow-500/10', 'border-yellow-500/20', 'text-yellow-500');
         }
+        
         receiptContainer.classList.add('hidden');
         
-        // Remove shake class after animation completes
         setTimeout(() => {
             errorDiv.classList.remove('shake');
         }, 500);
